@@ -15,7 +15,7 @@
  */
 
 const express = require('express');
-const NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
+const NaturalLanguageUnderstandingV1 = require('ibm-watson/natural-language-understanding/v1.js');
 
 const app = express();
 
@@ -54,12 +54,9 @@ app.post('/api/analyze', (req, res, next) => {
   if (process.env.SHOW_DUMMY_DATA) {
     res.json(require('./payload.json'));
   } else {
-    nlu.analyze(req.body, (err, results) => {
-      if (err) {
-        return next(err);
-      }
-      return res.json({ query: req.body.query, results });
-    });
+    nlu.analyze(req.body)
+      .then(results => res.json({ query: req.body.query, results }))
+      .catch(err => next(err));
   }
 });
 
